@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ml-failure-lab"
 version = "0.1.0"
+readme = "README.md"
 description = "Reproducible numerical and semantic ML failures with verified repairs"
 requires-python = ">=3.11"
 dependencies = ["torch>=2.6,<3", "numpy>=2,<3"]
