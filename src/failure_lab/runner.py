@@ -7,7 +7,11 @@ from pathlib import Path
 
 from failure_lab.diagnostics import environment, seed_everything
 
-CASES = {"unstable-loss": "unstable_loss", "exploding-gradients": "exploding_gradients"}
+CASES = {
+    "unstable-loss": "unstable_loss",
+    "exploding-gradients": "exploding_gradients",
+    "broadcasting-bug": "broadcasting_bug",
+}
 
 
 def run_case(name: str, output: Path) -> dict:

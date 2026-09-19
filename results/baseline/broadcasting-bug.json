@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "case": "broadcasting-bug",
+  "environment": {
+    "python": "3.13.7",
+    "os": "macOS-26.3.1-arm64-arm-64bit-Mach-O",
+    "torch": "2.14.0",
+    "numpy": "2.5.3",
+    "device": "cpu",
+    "cuda_available": false,
+    "mps_built": true,
+    "mps_available": false,
+    "seed": 7,
+    "threads": 1,
+    "deterministic_algorithms": true
+  },
+  "symptom": "Finite loss penalizes perfect predictions and training collapses to the mean.",
+  "hypothesis": "A [N] target broadcasts against [N, 1] predictions into [N, N].",
+  "evidence": {
+    "prediction_shape": [
+      32,
+      1
+    ],
+    "target_shape": [
+      32
+    ],
+    "residual_shape": [
+      32,
+      32
+    ],
+    "perfect_prediction_broken_loss": 2.838709831237793,
+    "perfect_prediction_gradient": {
+      "shape": [
+        32,
+        1
+      ],
+      "dtype": "torch.float32",
+      "count": 32,
+      "finite_count": 32,
+      "nan_count": 0,
+      "inf_count": 0,
+      "all_finite": true,
+      "min_finite": -0.125,
+      "max_finite": 0.125
+    },
+    "explicit_all_pairs_loss": 2.838709831237793
+  },
+  "root_cause": "Each prediction is compared to every target, so the optimum is the mean.",
+  "repair": "Preserve target's column dimension and require exact shape equality at loss.",
+  "broken": {
+    "weight": -1.0039823139518234e-10,
+    "bias": 0.4999999403953552,
+    "paired_mse": 1.419354796409607,
+    "training_objective": 1.419354796409607
+  },
+  "repaired": {
+    "weight": 1.999708652496338,
+    "bias": 0.4999999701976776,
+    "paired_mse": 3.012356586395981e-08,
+    "training_objective": 3.491241429287584e-08
+  },
+  "verification": {
+    "expected_failure": true,
+    "shape_guard": true,
+    "all_pairs_reference_match": true,
+    "paired_convergence": true,
+    "collapsed_weight": true
+  }
+}
