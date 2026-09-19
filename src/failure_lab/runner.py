@@ -11,6 +11,7 @@ CASES = {
     "unstable-loss": "unstable_loss",
     "exploding-gradients": "exploding_gradients",
     "broadcasting-bug": "broadcasting_bug",
+    "precision-failure": "precision_failure",
 }
 
 

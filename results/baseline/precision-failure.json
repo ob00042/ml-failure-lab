@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "case": "precision-failure",
+  "environment": {
+    "python": "3.13.7",
+    "os": "macOS-26.3.1-arm64-arm-64bit-Mach-O",
+    "torch": "2.14.0",
+    "numpy": "2.5.3",
+    "device": "cpu",
+    "cuda_available": false,
+    "mps_built": true,
+    "mps_available": false,
+    "seed": 7,
+    "threads": 1,
+    "deterministic_algorithms": true
+  },
+  "symptom": "Finite float16 residuals produce infinite squares and loss.",
+  "hypothesis": "Elementwise squaring exceeds float16's finite range before reduction.",
+  "evidence": {
+    "execution": "CPU explicit float16; not CUDA/MPS autocast",
+    "float16_max": 65504.0,
+    "input": {
+      "shape": [
+        4
+      ],
+      "dtype": "torch.float16",
+      "count": 4,
+      "finite_count": 4,
+      "nan_count": 0,
+      "inf_count": 0,
+      "all_finite": true,
+      "min_finite": -400.0,
+      "max_finite": 400.0
+    },
+    "squared_residuals": {
+      "shape": [
+        4
+      ],
+      "dtype": "torch.float16",
+      "count": 4,
+      "finite_count": 0,
+      "nan_count": 0,
+      "inf_count": 4,
+      "all_finite": false,
+      "min_finite": null,
+      "max_finite": null
+    },
+    "cast_after_square_loss": "inf",
+    "float64_reference_loss": 125000.0
+  },
+  "root_cause": "300^2 and 400^2 exceed 65504; float32 reduction cannot recover infinities.",
+  "repair": "Promote loss operands to float32 before subtraction, square, and reduction.",
+  "broken": {
+    "loss": "inf",
+    "gradients": {
+      "shape": [
+        4
+      ],
+      "dtype": "torch.float16",
+      "count": 4,
+      "finite_count": 4,
+      "nan_count": 0,
+      "inf_count": 0,
+      "all_finite": true,
+      "min_finite": -200.0,
+      "max_finite": 200.0
+    }
+  },
+  "repaired": {
+    "loss": 125000.0,
+    "gradients": {
+      "shape": [
+        4
+      ],
+      "dtype": "torch.float16",
+      "count": 4,
+      "finite_count": 4,
+      "nan_count": 0,
+      "inf_count": 0,
+      "all_finite": true,
+      "min_finite": -200.0,
+      "max_finite": 200.0
+    }
+  },
+  "verification": {
+    "expected_failure": true,
+    "finite_repair": true,
+    "float64_reference_match": true
+  }
+}
