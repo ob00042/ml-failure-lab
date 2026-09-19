@@ -1,8 +1,8 @@
 """Run reproducible CPU experiments and write strict JSON reports."""
 
 import argparse
-import importlib
 import json
+from importlib import import_module
 from pathlib import Path
 
 from failure_lab.diagnostics import environment, seed_everything
@@ -17,7 +17,7 @@ CASES = {
 
 def run_case(name: str, output: Path) -> dict:
     seed_everything()
-    result = importlib.import_module(f"failure_lab.cases.{CASES[name]}").run()
+    result = import_module(f"failure_lab.cases.{CASES[name]}").run()
     report = {"schema_version": 1, "case": name, "environment": environment(), **result}
     output.mkdir(parents=True, exist_ok=True)
     path = output / f"{name}.json"
