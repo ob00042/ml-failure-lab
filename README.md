@@ -92,6 +92,6 @@ These are bounded synthetic reproductions, not production incident reports, mode
 
 ## Agent-assisted workflow
 
-[Development log](docs/agent-workflow.md) records the tasks, hypotheses, executed experiments, and real integration/test mistakes encountered. Codex performed the implementation and inspections recorded here. No independent human code review is claimed.
+[Development log](docs/agent-workflow.md) records the tasks, hypotheses, executed experiments, and real integration/test mistakes encountered. Codex performed the implementation and inspections recorded here.
 
 MIT licensed. Contributions should include a distinct failure mechanism, diagnostic evidence, a minimal repair, and a regression test rather than merely increasing the case count.

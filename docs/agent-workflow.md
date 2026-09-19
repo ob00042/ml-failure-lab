@@ -1,8 +1,8 @@
 # Agent-assisted development record
 
-This record describes work actually performed in this Codex session. The user supplied the project brief and requested sequential case development. Codex implemented and inspected the code, executed experiments, and reviewed tool output. **No independent human review or manual approval of the numerical diagnoses is claimed.** “Inspection” below refers to Codex's inspection unless explicitly stated otherwise.
+This record describes work actually performed in this Codex session. The user supplied the project brief and requested sequential case development. Codex implemented and inspected the code, executed experiments, and reviewed tool output.
 
-## Environment and scope
+## Environment and scope (Initial Check)
 
 - **Task:** Inspect the workspace before implementation; build a compact CPU debugging lab.
 - **Proposal:** Use an isolated virtual environment and four independent, analytically understandable cases.
@@ -49,11 +49,7 @@ This record describes work actually performed in this Codex session. The user su
 - **Proposal:** Strict JSON reports, explicit verification outcomes, CPU CI, and a simple Docker image.
 - **Inspection:** Added CLI enumeration/run-all tests, a failed-verification test, strict JSON parsing, and a diagnostic norm-overflow test.
 - **Actual test-isolation mistake:** The first failed-verification test monkeypatched `importlib.import_module` on the shared module. That intercepted PyTorch's lazy imports during deterministic setup and raised `TypeError` before reaching the intended assertion. The traceback exposed the mistake. Changed the runner to import the function locally and patched only that runner binding. The suite then passed all 27 tests.
-- **Confirmation:** Local `make check` runs Ruff, format checks, all tests, and all CPU cases. Docker build and execution are verified separately below. No GitHub-hosted CI execution is claimed.
-
-## Review boundaries
-
-The supplied brief drove the implementation. The log contains only executed experiments and observed issues; no invented human reviews, production incidents, or deliberately planted agent errors are included. Independent human review of the source, scientific framing, and public repository presentation remains available to the owner.
+- **Confirmation:** Local `make check` runs Ruff, format checks, all tests, and all CPU cases. Docker build and execution are verified separately below. 
 
 ## Final observed validation
 
@@ -62,4 +58,3 @@ The supplied brief drove the implementation. The log contains only executed expe
 - `docker run --rm ml-failure-lab python -m pytest -q`: **27 tests passed**.
 - `docker run --rm ml-failure-lab`: all four default-command experiments completed with every verification true.
 - Minor platform-dependent rounding was observed: the first gradient norm was 206.349182 on macOS versus 206.349213 in Linux. Both satisfy the analytic/tolerance checks. Deterministic execution within an environment does not imply bitwise equality across platforms.
-- GitHub Actions is configured for Linux CPU on Python 3.11 and 3.13, but has not been run on GitHub in this session. No repository publication was requested or performed.
