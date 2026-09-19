@@ -1,0 +1,501 @@
+{
+  "schema_version": 1,
+  "case": "exploding-gradients",
+  "environment": {
+    "python": "3.13.7",
+    "os": "macOS-26.3.1-arm64-arm-64bit-Mach-O",
+    "torch": "2.14.0",
+    "numpy": "2.5.3",
+    "device": "cpu",
+    "cuda_available": false,
+    "mps_built": true,
+    "mps_available": false,
+    "seed": 7,
+    "threads": 1,
+    "deterministic_algorithms": true
+  },
+  "symptom": "Growing gradient/parameter norms followed by infinite training loss.",
+  "hypothesis": "A feature scaling change invalidated the existing learning rate.",
+  "evidence": {
+    "hessian": 68.78306579589844,
+    "stable_lr_upper_bound": 0.02907692433970079,
+    "broken_error_multiplier": -5.878306579589844,
+    "repaired_error_multiplier": 0.31216934204101565,
+    "normalized_feature_lr_upper_bound": 2.9076923130249837
+  },
+  "root_cause": "Full-batch quadratic GD diverges when |1 - lr * Hessian| > 1.",
+  "repair": "Reduce lr from 0.1 to 0.01, inside the measured stability interval.",
+  "broken": {
+    "lr": 0.1,
+    "final_loss": "inf",
+    "final_weight": 1.4788461630156964e+18,
+    "finite_training": false
+  },
+  "repaired": {
+    "lr": 0.01,
+    "final_loss": 0.0,
+    "final_weight": 3.0,
+    "finite_training": true,
+    "max_grad_norm": 206.34918212890625
+  },
+  "traces": {
+    "broken": [
+      {
+        "step": 0,
+        "loss": 309.5238037109375,
+        "grad_norm": 206.34918212890625,
+        "parameter_norm": 0.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 1,
+        "loss": 10695.4345703125,
+        "grad_norm": 1212.983642578125,
+        "parameter_norm": 20.634918212890625,
+        "finite_gradients": true
+      },
+      {
+        "step": 2,
+        "loss": 369575.1875,
+        "grad_norm": 7130.2900390625,
+        "parameter_norm": 100.66344451904297,
+        "finite_gradients": true
+      },
+      {
+        "step": 3,
+        "loss": 12770482.0,
+        "grad_norm": 41914.03125,
+        "parameter_norm": 612.3655395507812,
+        "finite_gradients": true
+      },
+      {
+        "step": 4,
+        "loss": 441277600.0,
+        "grad_norm": 246383.53125,
+        "parameter_norm": 3579.037841796875,
+        "finite_gradients": true
+      },
+      {
+        "step": 5,
+        "loss": 15248121856.0,
+        "grad_norm": 1448318.125,
+        "parameter_norm": 21059.31640625,
+        "finite_gradients": true
+      },
+      {
+        "step": 6,
+        "loss": 526891155456.0,
+        "grad_norm": 8513658.0,
+        "parameter_norm": 123772.5,
+        "finite_gradients": true
+      },
+      {
+        "step": 7,
+        "loss": 18206454448128.0,
+        "grad_norm": 50045896.0,
+        "parameter_norm": 727593.3125,
+        "finite_gradients": true
+      },
+      {
+        "step": 8,
+        "loss": 629114729922560.0,
+        "grad_norm": 294185088.0,
+        "parameter_norm": 4276996.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 9,
+        "loss": 2.1738736450535424e+16,
+        "grad_norm": 1729310208.0,
+        "parameter_norm": 25141514.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 10,
+        "loss": 7.511708134948209e+17,
+        "grad_norm": 10165415936.0,
+        "parameter_norm": 147789504.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 11,
+        "loss": 2.5956333724628943e+19,
+        "grad_norm": 59755446272.0,
+        "parameter_norm": 868752128.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 12,
+        "loss": 8.969080506019951e+20,
+        "grad_norm": 351260868608.0,
+        "parameter_norm": 5106792448.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 13,
+        "loss": 3.0992209886493056e+22,
+        "grad_norm": 2064819290112.0,
+        "parameter_norm": 30019295232.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 14,
+        "loss": 1.0709202508220611e+24,
+        "grad_norm": 12137641541632.0,
+        "parameter_norm": 176462643200.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 15,
+        "loss": 3.70051047841231e+25,
+        "grad_norm": 71348785250304.0,
+        "parameter_norm": 1037301579776.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 16,
+        "loss": 1.2786925862930194e+27,
+        "grad_norm": 419410032459776.0,
+        "parameter_norm": 6097576919040.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 17,
+        "loss": 4.418456698917976e+28,
+        "grad_norm": 2465420749570048.0,
+        "parameter_norm": 35843427270656.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 18,
+        "loss": 1.5267749338347055e+30,
+        "grad_norm": 1.4492499556958208e+16,
+        "parameter_norm": 210698646847488.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 19,
+        "loss": 5.2756942483589e+31,
+        "grad_norm": 8.519137210086195e+16,
+        "parameter_norm": 1238551396089856.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 20,
+        "loss": 1.8229897281391264e+33,
+        "grad_norm": 5.007810233662177e+17,
+        "parameter_norm": 7280585894526976.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 21,
+        "loss": 6.299248481559359e+34,
+        "grad_norm": 2.9437444712772403e+18,
+        "parameter_norm": 4.27975194485719e+16,
+        "finite_gradients": true
+      },
+      {
+        "step": 22,
+        "loss": 2.176672704447091e+36,
+        "grad_norm": 1.7304230546171232e+19,
+        "parameter_norm": 2.5157691908921754e+17,
+        "finite_gradients": true
+      },
+      {
+        "step": 23,
+        "loss": "inf",
+        "grad_norm": 1.0171956782118522e+20,
+        "parameter_norm": 1.4788461630156964e+18,
+        "finite_gradients": true
+      }
+    ],
+    "repaired": [
+      {
+        "step": 0,
+        "loss": 309.5238037109375,
+        "grad_norm": 206.34918212890625,
+        "parameter_norm": 0.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 1,
+        "loss": 30.163007736206055,
+        "grad_norm": 64.41590118408203,
+        "parameter_norm": 2.0634918212890625,
+        "finite_gradients": true
+      },
+      {
+        "step": 2,
+        "loss": 2.9393749237060547,
+        "grad_norm": 20.108665466308594,
+        "parameter_norm": 2.707650899887085,
+        "finite_gradients": true
+      },
+      {
+        "step": 3,
+        "loss": 0.28644058108329773,
+        "grad_norm": 6.277303218841553,
+        "parameter_norm": 2.9087376594543457,
+        "finite_gradients": true
+      },
+      {
+        "step": 4,
+        "loss": 0.027913615107536316,
+        "grad_norm": 1.9595837593078613,
+        "parameter_norm": 2.971510648727417,
+        "finite_gradients": true
+      },
+      {
+        "step": 5,
+        "loss": 0.00272017577663064,
+        "grad_norm": 0.6117222309112549,
+        "parameter_norm": 2.9911065101623535,
+        "finite_gradients": true
+      },
+      {
+        "step": 6,
+        "loss": 0.0002651006216183305,
+        "grad_norm": 0.19096823036670685,
+        "parameter_norm": 2.9972236156463623,
+        "finite_gradients": true
+      },
+      {
+        "step": 7,
+        "loss": 2.583063906058669e-05,
+        "grad_norm": 0.05961058288812637,
+        "parameter_norm": 2.999133348464966,
+        "finite_gradients": true
+      },
+      {
+        "step": 8,
+        "loss": 2.5183576326526236e-06,
+        "grad_norm": 0.018612917512655258,
+        "parameter_norm": 2.9997293949127197,
+        "finite_gradients": true
+      },
+      {
+        "step": 9,
+        "loss": 2.448446139169391e-07,
+        "grad_norm": 0.00580364465713501,
+        "parameter_norm": 2.999915599822998,
+        "finite_gradients": true
+      },
+      {
+        "step": 10,
+        "loss": 2.404592258642424e-08,
+        "grad_norm": 0.0018187519162893295,
+        "parameter_norm": 2.9999735355377197,
+        "finite_gradients": true
+      },
+      {
+        "step": 11,
+        "loss": 2.3770163615211004e-09,
+        "grad_norm": 0.0005718035390600562,
+        "parameter_norm": 2.9999916553497314,
+        "finite_gradients": true
+      },
+      {
+        "step": 12,
+        "loss": 2.3570534413153155e-10,
+        "grad_norm": 0.00017997113172896206,
+        "parameter_norm": 2.99999737739563,
+        "finite_gradients": true
+      },
+      {
+        "step": 13,
+        "loss": 1.658850834473924e-11,
+        "grad_norm": 4.723194433609024e-05,
+        "parameter_norm": 2.9999992847442627,
+        "finite_gradients": true
+      },
+      {
+        "step": 14,
+        "loss": 2.0042023596289482e-12,
+        "grad_norm": 1.4952309356885962e-05,
+        "parameter_norm": 2.999999761581421,
+        "finite_gradients": true
+      },
+      {
+        "step": 15,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 16,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 17,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 18,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 19,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 20,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 21,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 22,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 23,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 24,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 25,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 26,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 27,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 28,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 29,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 30,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 31,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 32,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 33,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 34,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 35,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 36,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 37,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 38,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      },
+      {
+        "step": 39,
+        "loss": 0.0,
+        "grad_norm": 0.0,
+        "parameter_norm": 3.0,
+        "finite_gradients": true
+      }
+    ]
+  },
+  "verification": {
+    "expected_failure": true,
+    "finite_repair": true,
+    "bounded_gradients": true,
+    "convergence": true
+  }
+}
